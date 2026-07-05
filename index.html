@@ -813,7 +813,7 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script type="module">
-      // 宣告系統科室與相應品項
+      // 宣告系統科室與相應品項 (已更換在部分瀏覽器或載入慢時，可能溢出或無圖形資源之 icon 為通用標準 Icon 代碼)
       export const ROOMS = [
         { id: "ct1", name: "1F CT", sheetName: "Sheet A", icon: "contrast", accent: "#2563eb", items: ["Omnipaque", "Visipague320", "高壓注射器針筒"] },
         { id: "ct3", name: "3F CT", sheetName: "Sheet B", icon: "scanner", accent: "#0891b2", items: ["Omnipaque", "Visipague320", "高壓注射器針筒"] },
@@ -1084,13 +1084,7 @@
 
       export function resolveOpeningStock(roomId, year, month) {
         const settings = loadSettings();
-        // 修正：對比 roomId 底下所有項目的期初庫存，加總作為 generic 起始庫存
-        let opening = 0;
-        Object.entries(settings.initialStocks).forEach(([key, val]) => {
-          if (key.startsWith(`${roomId}:`)) {
-            opening += Number(val || 0);
-          }
-        });
+        let opening = Number(settings.initialStocks[roomId] || 0);
         for (let currentMonth = 1; currentMonth < month; currentMonth += 1) {
           const previousRows = calculateDailyRowsWithoutCarry(roomId, year, currentMonth, opening);
           opening = previousRows.at(-1)?.balance ?? opening;
@@ -1249,36 +1243,20 @@
         return `${year}-${month}-${day}`;
       }
 
-      // 修正：極度強健的欄位名稱（Key）解析演算法，解決空格、大小寫、中英文字元對不上的問題
       function parseDailyHeader(header, roomName) {
-        const h = String(header || "").trim();
-        const r = String(roomName || "").trim();
-        if (!h || h === "日期" || h === "date" || h === "備註" || h === "note") return null;
-        
-        // 轉為小寫並完全過濾空格
-        const normalizedH = h.toLowerCase().replace(/\s+/g, "");
-        const normalizedR = r.toLowerCase().replace(/\s+/g, "");
-        
-        // 判斷是否為當前科室欄位
-        if (!normalizedH.startsWith(normalizedR)) return null;
-        
-        // 建立後綴對應表（全去空白比對）
+        if (header === "日期" || header === "備註" || !header.startsWith(`${roomName} `)) return null;
         const suffixMap = [
-          ["補充數", "inQty"],
-          ["人數", "peopleQty"],
-          ["補充", "inQty"],
-          ["結存", "balanceQty"],
-          ["用量", "usedQty"]
+          [" 補充數", "inQty"],
+          [" 人數", "peopleQty"],
+          [" 補充", "inQty"],
+          [" 結存", "balanceQty"],
+          [" 用量", "usedQty"]
         ];
-        
-        const match = suffixMap.find(([suffix]) => normalizedH.endsWith(suffix));
+        const body = header.slice(roomName.length + 1);
+        const match = suffixMap.find(([suffix]) => body.endsWith(suffix));
         if (!match) return null;
-        
-        // 提取 Item Name：去除科室前綴與結尾後綴
-        const bodyCleaned = normalizedH.slice(normalizedR.length, -match[0].length);
-        
         return {
-          item: bodyCleaned, // 回傳規格化後的全小寫/無空格項目名，以利完全匹配 aliases
+          item: body.slice(0, -match[0].length),
           key: match[1]
         };
       }
@@ -2677,12 +2655,6 @@ ${dataSummaryContext}
         });
 
         ui.render();
-
-        // 修正：在 B 平台開啟/重新整理後，若有配置 API 則自動在背景向 Google Sheets 發起同步請求，避免看到空白資料
-        const settings = loadSettings();
-        if (settings.apiUrl) {
-          ui.syncCurrentRoom();
-        }
       });
     </script>
   </body>
