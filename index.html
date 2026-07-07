@@ -12,7 +12,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,0,0&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     
-    <!-- 使用 Tailwind CSS 提昇 UI 與 AI 聊天介面美觀性 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -62,7 +61,6 @@
         -webkit-tap-highlight-color: transparent;
       }
 
-      /* 防止圖示文字在載入期間或圖示碼失效時超出容器邊框 */
       .material-symbols-rounded {
         font-family: 'Material Symbols Rounded';
         font-weight: normal;
@@ -663,7 +661,6 @@
         gap: 8px;
       }
 
-      /* Syringe and summary panels */
       .syringe-panel {
         background-color: var(--bg-surface);
         border: 1px solid var(--border-color);
@@ -765,7 +762,6 @@
       </form>
     </dialog>
 
-    <!-- 系統設定 Dialog -->
     <dialog id="settingsDialog" class="app-dialog wide-dialog">
       <form id="settingsForm" method="dialog">
         <div class="dialog-head">
@@ -813,26 +809,25 @@
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
     <script type="module">
-      // 宣告系統科室與相應品項 (已更換在部分瀏覽器或載入慢時，可能溢出或無圖形資源之 icon 為通用標準 Icon 代碼)
+      // 宣告系統科室與相應品項 (已將 Visipague320 修正為 Visipague)
       export const ROOMS = [
-        { id: "ct1", name: "1F CT", sheetName: "Sheet A", icon: "contrast", accent: "#2563eb", items: ["Omnipaque", "Visipague320", "高壓注射器針筒"] },
-        { id: "ct3", name: "3F CT", sheetName: "Sheet B", icon: "scanner", accent: "#0891b2", items: ["Omnipaque", "Visipague320", "高壓注射器針筒"] },
-        { id: "rct", name: "RCT", sheetName: "Sheet C", icon: "monitor_heart", accent: "#7c3aed", items: ["Omnipaque", "Ultravist370", "Visipague320", "高壓注射器針筒"] },
+        { id: "ct1", name: "1F CT", sheetName: "Sheet A", icon: "contrast", accent: "#2563eb", items: ["Omnipaque", "Visipague", "高壓注射器針筒"] },
+        { id: "ct3", name: "3F CT", sheetName: "Sheet B", icon: "scanner", accent: "#0891b2", items: ["Omnipaque", "Visipague", "高壓注射器針筒"] },
+        { id: "rct", name: "RCT", sheetName: "Sheet C", icon: "monitor_heart", accent: "#7c3aed", items: ["Omnipaque", "Ultravist370", "Visipague", "高壓注射器針筒"] },
         { id: "mri1", name: "1F MRI", sheetName: "Sheet D", icon: "magnet", accent: "#0f766e", items: ["Gadolinium", "Eovist", "生理食鹽水"] },
         { id: "mri3", name: "3F MRI", sheetName: "Sheet E", icon: "view_in_ar", accent: "#16a34a", items: ["Gadolinium", "Eovist", "生理食鹽水"] },
         { id: "mri3t", name: "3T MRI", sheetName: "Sheet F", icon: "sensors", accent: "#ca8a04", items: ["Gadolinium", "Primovist", "生理食鹽水"] },
         { id: "special", name: "特殊", sheetName: "Sheet G", icon: "biotech", accent: "#db2777", items: ["Ultravist300", "Ultravist370", "Barium", "Omnipaque"] },
-        { id: "vascular", name: "血管", sheetName: "Sheet H", icon: "bloodtype", accent: "#dc2626", items: ["Omnipaque", "Ultravist370", "Visipague320", "高壓注射器針筒"] },
+        { id: "vascular", name: "血管", sheetName: "Sheet H", icon: "bloodtype", accent: "#dc2626", items: ["Omnipaque", "Ultravist370", "Visipague", "高壓注射器針筒"] },
         { id: "ivp", name: "IVP", sheetName: "Sheet I", icon: "science", accent: "#9333ea", items: ["Ultravist300"] },
         { id: "summary", name: "總盤點彙整", sheetName: "Summary", icon: "inventory_2", accent: "#4f46e5", type: "summary", items: [] },
         { id: "syringe", name: "高壓注射器針筒", sheetName: "Sheet J", icon: "vaccines", accent: "#0d9488", type: "syringe", items: ["高壓注射器針筒", "延長管", "三通閥"] },
-        // AI 智慧臨床助理卡片
         { id: "ai_copilot", name: "AI 智慧臨床助理", sheetName: "AICopilot", icon: "psychology", accent: "#f97316", type: "ai_copilot", items: [] }
       ];
 
-      // 預設期初設定與基本狀態
+      // 預設期初設定與基本狀態 (已更新 GAS API 為新網址，期初 Visipague 欄位正常對接)
       export const DEFAULT_SETTINGS = {
-        apiUrl: "https://script.google.com/macros/s/AKfycbyzlRGnF0LrTkGGLj1j2gpd7RX95EgEd88kP40XFNJJTCQCGa6uB02ypOhpyiy8t1Iv/exec",
+        apiUrl: "https://script.google.com/macros/s/AKfycbw4qhN0C3RzBDwmLsYiEsxFUW_y5yQla_viqPa4aaKCRz-Ef53vAA5KCir4yIVThp9QCQ/exec",
         aiVoice: "Charon",
         sheets: Object.fromEntries(ROOMS.map((room) => [room.id, room.sheetName])),
         initialStocks: {
@@ -1202,7 +1197,7 @@
               usedQty: 0,
               balanceQty: 0,
               wasteQty: 0,
-              note: row["備註"] || ""
+              note: (row["備註"] || row["備註 "] || "").trim()
             };
             current[parsed.key] = Number(value || 0);
             grouped.set(parsed.item, current);
@@ -1243,8 +1238,12 @@
         return `${year}-${month}-${day}`;
       }
 
+      // 強固型 Trim 欄位分析，徹底移除前後空白所引起的比對錯誤
       function parseDailyHeader(header, roomName) {
-        if (header === "日期" || header === "備註" || !header.startsWith(`${roomName} `)) return null;
+        const trimmedHeader = String(header || "").trim();
+        const trimmedRoom = String(roomName || "").trim();
+        if (trimmedHeader === "日期" || trimmedHeader === "備註" || !trimmedHeader.startsWith(`${trimmedRoom} `)) return null;
+        
         const suffixMap = [
           [" 補充數", "inQty"],
           [" 人數", "peopleQty"],
@@ -1252,11 +1251,13 @@
           [" 結存", "balanceQty"],
           [" 用量", "usedQty"]
         ];
-        const body = header.slice(roomName.length + 1);
-        const match = suffixMap.find(([suffix]) => body.endsWith(suffix));
+        
+        const body = trimmedHeader.slice(trimmedRoom.length + 1).trim();
+        const match = suffixMap.find(([suffix]) => body.endsWith(suffix.trim()));
         if (!match) return null;
+        
         return {
-          item: body.slice(0, -match[0].length),
+          item: body.slice(0, -match[0].trim().length).trim(),
           key: match[1]
         };
       }
@@ -1933,6 +1934,7 @@ ${dataSummaryContext}
             resolveGroupOpeningStock(room.id, group, state.year, state.month)
           ]));
           const previousDayHadInput = Object.fromEntries(config.groups.map((group) => [group.key, false]));
+          
           rows.forEach((row) => {
             const tr = document.createElement("tr");
             const cells = config.groups.flatMap((group) => {
@@ -2119,7 +2121,6 @@ ${dataSummaryContext}
               throw new Error("尚未設定 Google Sheets API 網址，請先至設定完成配置。");
             }
 
-            // Step 1: 重新下載資料 (不取快取)
             toast("🔄 步驟 1/6: 正在自 Google Sheets 下載最新雲端資料...");
             const syncTargets = operationalRooms();
             const freshRawDataMap = new Map();
@@ -2128,7 +2129,6 @@ ${dataSummaryContext}
               const url = new URL(settings.apiUrl);
               url.searchParams.set("action", "list");
               url.searchParams.set("sheet", settings.sheets[room.id]);
-              // 加上動態隨機值徹底擊穿網關與瀏覽器快取
               url.searchParams.set("_", `${Date.now()}-${room.id}-${Math.random()}`);
               
               const response = await fetch(url, { cache: "no-store" });
@@ -2140,11 +2140,9 @@ ${dataSummaryContext}
               freshRawDataMap.set(room.id, rows);
             }));
 
-            // Step 2: 徹底清除 App 記憶體中的舊快取
             toast("🧹 步驟 2/6: 正在徹底清除 App 目前記憶體中的舊資料快取...");
             localStorage.removeItem("radiology_inventory_entries_v1");
 
-            // Step 3: 重建資料模型
             toast("🏗️ 步驟 3/6: 正在重組與分析並建立乾淨的資料模型...");
             const reconstitutedEntries = [];
             for (const room of syncTargets) {
@@ -2154,17 +2152,14 @@ ${dataSummaryContext}
             }
             replaceAllEntries(reconstitutedEntries);
 
-            // Step 4: 更新與重算攝影室特定狀態
             toast("🏢 步驟 4/6: 正在重新同步各攝影室特定狀態與公式結存...");
             syncTargets.forEach((room) => {
               calculateDailyRows(room.id, state.year, state.month);
             });
 
-            // Step 5: 更新統計數據
             toast("📊 步驟 5/6: 正在重新計算本期總彙整統計與物料圖表...");
             calculateSummary(syncTargets.map(r => r.id), state.year, state.month);
 
-            // Step 6: 更新並通知 UI 層重新渲染畫面
             toast("🎨 步驟 6/6: 同步成功！正在重新繪製前端所有視圖...");
             render();
 
@@ -2361,7 +2356,8 @@ ${dataSummaryContext}
         ct1: {
           groups: [
             referenceGroup("omni", "Omnipaque", ["Omnipaque"], ["people", "in", "balance", "used"]),
-            referenceGroup("visipague", "Visipague", ["Visipague", "Visipaque"], ["people"]),
+            // 擴充 Visipague，使 1F CT 可以登記與同步所有變數
+            referenceGroup("visipague", "Visipague", ["Visipague", "Visipaque", "Visipague 320", "Visipague320"], ["people", "in", "balance", "used"]),
             referenceGroup("injector", "高壓注射器針筒", ["高壓注射器針筒", "注射器", "針筒", "高壓針筒"], ["dose"]),
             referenceGroup("syringeRefill", "高壓注射器針筒補充", ["高壓注射器針筒補充", "針筒補充"], ["refill"])
           ]
@@ -2369,7 +2365,8 @@ ${dataSummaryContext}
         ct3: {
           groups: [
             referenceGroup("omni", "Omnipaque", ["Omnipaque"], ["people", "in", "balance", "used"]),
-            referenceGroup("visipague", "Visipague", ["Visipague", "Visipaque"], ["people"]),
+            // 擴充 Visipague，使 3F CT 可以登記與同步所有變數
+            referenceGroup("visipague", "Visipague", ["Visipague", "Visipaque", "Visipague 320", "Visipague320"], ["people", "in", "balance", "used"]),
             referenceGroup("injector", "高壓注射器針筒", ["高壓注射器針筒", "注射器", "針筒", "高壓針筒"], ["dose"])
           ]
         },
@@ -2377,7 +2374,8 @@ ${dataSummaryContext}
           groups: [
             referenceGroup("omni", "Omnipaque", ["Omnipaque"], ["people", "in", "balance", "used"]),
             referenceGroup("ultravist370", "Ultravist 370", ["Ultravist370", "Ultravist 370"], ["people", "in", "balance", "used"]),
-            referenceGroup("visipague", "Visipague", ["Visipague", "Visipaque"], ["people"]),
+            // 擴充 Visipague，使 RCT 可以登記與同步所有變數
+            referenceGroup("visipague", "Visipague", ["Visipague", "Visipaque", "Visipague 320", "Visipague320"], ["people", "in", "balance", "used"]),
             referenceGroup("injector", "高壓注射器針筒", ["高壓注射器針筒", "注射器", "針筒", "高壓針筒"], ["dose"])
           ]
         },
@@ -2414,7 +2412,8 @@ ${dataSummaryContext}
           groups: [
             referenceGroup("omni", "Omnipaque", ["Omnipaque"], ["people", "in", "balance", "used"]),
             referenceGroup("ultravist370", "Ultravist 370", ["Ultravist370", "Ultravist 370"], ["people", "in", "balance", "used"]),
-            referenceGroup("visipague", "Visipague", ["Visipague", "Visipaque"], ["people"])
+            // 擴充 Visipague，使血管攝影室可以登記與同步所有變數
+            referenceGroup("visipague", "Visipague", ["Visipague", "Visipaque", "Visipague 320", "Visipague320"], ["people", "in", "balance", "used"])
           ]
         },
         ivp: {
@@ -2475,11 +2474,12 @@ ${dataSummaryContext}
         return `<td${className}>${strong ? `<strong>${value}</strong>` : value}</td>`;
       }
 
+      // 總盤點對比劑品項宣告 (將 Visipague 320 修正為 Visipague)
       const CONTRAST_SUMMARY_ITEMS = [
         { name: "Omnipaque", aliases: ["omnipaque"] },
         { name: "Ultravist 300", aliases: ["ultravist300", "ultravist 300", "優視特300"] },
         { name: "Ultravist 370", aliases: ["ultravist370", "ultravist 370"] },
-        { name: "Visipague 320", aliases: ["visipague320", "visipague", "visipaque"] },
+        { name: "Visipague", aliases: ["visipague", "visipague320", "visipaque"] },
         { name: "鋇劑 (Barium)", aliases: ["barium", "鋇劑"] },
         { name: "Gadovist", aliases: ["gadovist", "gadolinium"] },
         { name: "Dotarem", aliases: ["dotarem"] },
@@ -2655,6 +2655,12 @@ ${dataSummaryContext}
         });
 
         ui.render();
+
+        // 智慧型自動修復：當平台重新整理時，自動向試算表發起同步請求
+        const settings = loadSettings();
+        if (settings.apiUrl) {
+          ui.syncCurrentRoom();
+        }
       });
     </script>
   </body>
